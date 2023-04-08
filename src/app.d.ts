@@ -7,7 +7,9 @@ declare global {
 		interface Error {
 			description?: string
 		}
-		// interface Locals {}
+		interface Locals {
+			authenticated?: boolean
+		}
 		// interface PageData {}
 		interface Platform {
 			env?: {

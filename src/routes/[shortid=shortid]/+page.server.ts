@@ -1,15 +1,11 @@
 import type { PageServerLoad } from './$types'
-import { error, redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import { KVFast } from '$lib/server/db'
 import type { Link } from '$lib/types'
+import { PremadeError } from '$lib/server/errors'
 
 export const load = (async ({ params, setHeaders, platform }) => {
-	if (!platform?.env?.DATA) {
-		throw error(500, {
-			message: 'Internal Server Error',
-			description: 'Missing environment variables'
-		})
-	}
+	if (!platform?.env?.DATA) throw PremadeError.ENVMISS
 
 	const db = new KVFast<Link>(platform.env.DATA, 'link')
 	const data = await db.get(params.shortid)
@@ -21,8 +17,5 @@ export const load = (async ({ params, setHeaders, platform }) => {
 		throw redirect(301, data.long_url)
 	}
 
-	throw error(404, {
-		message: 'Not Found',
-		description: 'The requested Short URL could not be found by the server.'
-	})
+	throw PremadeError.NOTFOUND
 }) satisfies PageServerLoad
