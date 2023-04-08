@@ -1,18 +1,18 @@
 <script lang="ts">
-	import Icon from 'svelte-fa';
-	import { faCopy } from '@fortawesome/free-solid-svg-icons';
+	import Icon from 'svelte-fa'
+	import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
-	let tooltip_open = false;
-	let force_open = false;
-	export let value: string;
+	let tooltip_open = false
+	let force_open = false
+	export let value: string
 
 	function copy() {
-		navigator.clipboard.writeText(value);
-		tooltip_open = true;
-		force_open = true;
+		navigator.clipboard.writeText(value)
+		tooltip_open = true
+		force_open = true
 		setTimeout(() => {
-			force_open = false;
-		}, 1000);
+			force_open = false
+		}, 1000)
 	}
 </script>
 
@@ -23,7 +23,7 @@
 	class:tooltip-open={force_open}
 	on:click={copy}
 	on:mouseleave={() => {
-		tooltip_open = false;
+		tooltip_open = false
 	}}
 	data-tip="Copied"
 >

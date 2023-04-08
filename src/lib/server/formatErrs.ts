@@ -1,11 +1,11 @@
-import type { ZodIssue } from "zod"
+import type { ZodIssue } from 'zod'
 
 export const formatErrs = (errs: ZodIssue[]) => {
-    const set = new Set<string>()
+	const set = new Set<string>()
 
-    for (const err of errs) {
-        set.add(err.message)
-    }
+	for (const err of errs) {
+		set.add(err.message)
+	}
 
-    return [...set].join(', ')
+	return [...set].join(', ')
 }

@@ -1,23 +1,23 @@
 <script lang="ts">
-	import Copy from '$lib/Copy.svelte';
-	import Link from '$lib/Link.svelte';
-	import Icon from 'svelte-fa';
-	import { faEdit, faCircleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons';
-	import { page } from '$app/stores';
-	import { enhance } from '$app/forms';
-	import type { SubmitFunction } from '$app/forms';
-	import { fade, fly } from 'svelte/transition';
-	import { flip } from 'svelte/animate';
-	import type { PageData, ActionData } from './$types';
-	import type { Link as dLink } from '$lib/types';
+	import Copy from '$lib/Copy.svelte'
+	import Link from '$lib/Link.svelte'
+	import Icon from 'svelte-fa'
+	import { faEdit, faCircleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons'
+	import { page } from '$app/stores'
+	import { enhance } from '$app/forms'
+	import type { SubmitFunction } from '$app/forms'
+	import { fade, fly } from 'svelte/transition'
+	import { flip } from 'svelte/animate'
+	import type { PageData, ActionData } from './$types'
+	import type { Link as dLink } from '$lib/types'
 
-	export let data: PageData;
-	export let form: ActionData;
+	export let data: PageData
+	export let form: ActionData
 
 	let error = {
 		show: false,
 		message: ''
-	};
+	}
 
 	$: {
 		if (form) {
@@ -25,36 +25,36 @@
 				switch (form.action) {
 					// CREATE ACTION
 					case 'create': {
-						data.urls = [form.created, ...data.urls];
-						break;
+						data.urls = [form.created, ...data.urls]
+						break
 					}
 					// UPDATE ACTION
 					case 'update': {
-						const updated: dLink = form.updated;
+						const updated: dLink = form.updated
 						data.urls = data.urls.map((e) => {
-							if (e.id == updated.id) return updated;
-							return e;
-						});
-						break;
+							if (e.id == updated.id) return updated
+							return e
+						})
+						break
 					}
 					default:
-						break;
+						break
 				}
 			} else {
-				error.show = true;
-				error.message = form.error;
+				error.show = true
+				error.message = form.error
 			}
 		}
 	}
 
-	let show_hidden_link: boolean = false;
-	let base_url = $page.url.host;
+	let show_hidden_link: boolean = false
+	let base_url = $page.url.host
 
 	// modals
 	let info_modal = {
 		visible: false,
 		data: undefined as undefined | dLink
-	};
+	}
 	let edit_modal = {
 		visible: false,
 		data: undefined as undefined | dLink,
@@ -62,114 +62,114 @@
 			_shortid: '',
 			new_title: ''
 		}
-	};
+	}
 	let hide_modal = {
 		visible: false,
 		data: undefined as undefined | dLink,
 		user_data: {
 			_shortid: ''
 		}
-	};
+	}
 	let show_modal = {
 		visible: false,
 		data: undefined as undefined | dLink,
 		user_data: {
 			_shortid: ''
 		}
-	};
+	}
 
 	// CREATE FORM
 	let create_form: {
-		loading: boolean;
-		handle: SubmitFunction;
+		loading: boolean
+		handle: SubmitFunction
 	} = {
 		loading: false,
 		handle: () => {
-			create_form.loading = true;
+			create_form.loading = true
 
 			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data;
-				create_form.loading = false;
+				form = (result as unknown as { data: ActionData }).data
+				create_form.loading = false
 				if (result.type == 'success') {
-					form_el.reset();
+					form_el.reset()
 				}
-			};
+			}
 		}
-	};
+	}
 
 	//EDIT FORM
 	let edit_form: {
-		loading: boolean;
-		handle: SubmitFunction;
+		loading: boolean
+		handle: SubmitFunction
 	} = {
 		loading: false,
 		handle: () => {
-			edit_form.loading = true;
+			edit_form.loading = true
 
 			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data;
-				edit_form.loading = false;
+				form = (result as unknown as { data: ActionData }).data
+				edit_form.loading = false
 
 				if (result.type == 'success') {
-					form_el.reset();
-					info_modal.data = form?.updated;
-					edit_modal.visible = false;
+					form_el.reset()
+					info_modal.data = form?.updated
+					edit_modal.visible = false
 				}
-			};
+			}
 		}
-	};
+	}
 
 	// HIDE_FORM
 	let hide_form: {
-		loading: boolean;
-		handle: SubmitFunction;
+		loading: boolean
+		handle: SubmitFunction
 	} = {
 		loading: false,
 		handle: () => {
-			hide_form.loading = true;
+			hide_form.loading = true
 
 			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data;
-				hide_form.loading = false;
+				form = (result as unknown as { data: ActionData }).data
+				hide_form.loading = false
 
 				if (result.type == 'success') {
-					form_el.reset();
-					hide_modal.visible = false;
-					info_modal.visible = false;
+					form_el.reset()
+					hide_modal.visible = false
+					info_modal.visible = false
 				}
-			};
+			}
 		}
-	};
+	}
 
 	// SHOW FORM
 	let show_form: {
-		loading: boolean;
-		handle: SubmitFunction;
+		loading: boolean
+		handle: SubmitFunction
 	} = {
 		loading: false,
 		handle: () => {
-			show_form.loading = true;
+			show_form.loading = true
 
 			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data;
-				show_form.loading = false;
+				form = (result as unknown as { data: ActionData }).data
+				show_form.loading = false
 
 				if (result.type == 'success') {
-					form_el.reset();
-					show_modal.visible = false;
-					info_modal.visible = false;
+					form_el.reset()
+					show_modal.visible = false
+					info_modal.visible = false
 				}
-			};
+			}
 		}
-	};
+	}
 
 	// PREVENT SPAMMING
-	let show_hidden_link_last_change: Date = new Date(new Date().getTime() - 600);
+	let show_hidden_link_last_change: Date = new Date(new Date().getTime() - 600)
 	$: {
 		if (new Date().getTime() - show_hidden_link_last_change.getTime() < 500) {
-			show_hidden_link = !show_hidden_link;
+			show_hidden_link = !show_hidden_link
 		} else {
-			show_hidden_link_last_change = new Date();
+			show_hidden_link_last_change = new Date()
 		}
 	}
 </script>
@@ -239,7 +239,7 @@
 				<button
 					class="btn btn-sm btn-ghost"
 					on:click={() => {
-						error.show = false;
+						error.show = false
 					}}><Icon icon={faXmark} /></button
 				>
 			</div>
@@ -287,8 +287,8 @@
 								<button
 									class="btn btn-ghost btn-xs"
 									on:click={() => {
-										info_modal.data = url;
-										info_modal.visible = true;
+										info_modal.data = url
+										info_modal.visible = true
 									}}>details</button
 								>
 							</div></td
@@ -307,7 +307,7 @@
 	id="toggle_tohide_info_modal"
 	hidden
 	on:change={() => {
-		info_modal.visible = false;
+		info_modal.visible = false
 	}}
 />
 {#if info_modal.visible}
@@ -327,10 +327,10 @@
 						class="my-auto ml-2 cursor-pointer"
 						on:click={() => {
 							edit_modal.user_data.new_title =
-								info_modal.data?.title || info_modal.data?.long_url || '';
-							edit_modal.user_data._shortid = info_modal.data?.id || '';
-							edit_modal.data = info_modal.data;
-							edit_modal.visible = true;
+								info_modal.data?.title || info_modal.data?.long_url || ''
+							edit_modal.user_data._shortid = info_modal.data?.id || ''
+							edit_modal.data = info_modal.data
+							edit_modal.visible = true
 						}}
 					>
 						<Icon icon={faEdit} />
@@ -352,18 +352,18 @@
 					<button
 						class="btn btn-error"
 						on:click={() => {
-							hide_modal.user_data._shortid = info_modal.data?.id || '';
-							hide_modal.data = info_modal.data;
-							hide_modal.visible = true;
+							hide_modal.user_data._shortid = info_modal.data?.id || ''
+							hide_modal.data = info_modal.data
+							hide_modal.visible = true
 						}}>Hide link</button
 					>
 				{:else}
 					<button
 						class="btn btn-success"
 						on:click={() => {
-							show_modal.user_data._shortid = info_modal.data?.id || '';
-							show_modal.data = info_modal.data;
-							show_modal.visible = true;
+							show_modal.user_data._shortid = info_modal.data?.id || ''
+							show_modal.data = info_modal.data
+							show_modal.visible = true
 						}}>Show link</button
 					>
 				{/if}
@@ -379,7 +379,7 @@
 	id="toggle_tohide_edit_modal"
 	hidden
 	on:change={() => {
-		edit_modal.visible = false;
+		edit_modal.visible = false
 	}}
 />
 {#if edit_modal.visible}
@@ -405,7 +405,7 @@
 						type="button"
 						class="btn"
 						on:click={() => {
-							edit_modal.visible = false;
+							edit_modal.visible = false
 						}}>Cancel</button
 					>
 					<button
@@ -429,7 +429,7 @@
 	id="toggle_tohide_hide_modal"
 	hidden
 	on:change={() => {
-		hide_modal.visible = false;
+		hide_modal.visible = false
 	}}
 />
 {#if hide_modal.visible}
@@ -449,7 +449,7 @@
 				<button
 					class="btn"
 					on:click={() => {
-						hide_modal.visible = false;
+						hide_modal.visible = false
 					}}>Cancel</button
 				>
 				<button hidden />
@@ -471,7 +471,7 @@
 	id="toggle_tohide_show_modal"
 	hidden
 	on:change={() => {
-		show_modal.visible = false;
+		show_modal.visible = false
 	}}
 />
 {#if show_modal.visible}
@@ -489,7 +489,7 @@
 				<button
 					class="btn"
 					on:click={() => {
-						show_modal.visible = false;
+						show_modal.visible = false
 					}}>Cancel</button
 				>
 				<button hidden />

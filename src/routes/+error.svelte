@@ -3,10 +3,10 @@
 
 	let error = $page.error
 
-	if(!$page.route.id) {
+	if (!$page.route.id) {
 		error = {
-			message: "Not Found",
-        	description: "The requested URL was not found on this server."
+			message: 'Not Found',
+			description: 'The requested URL was not found on this server.'
 		}
 	}
 
