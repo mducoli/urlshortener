@@ -9,11 +9,11 @@
 			description: 'The requested URL was not found on this server.'
 		}
 	}
-
-	// if (!$page.error?.description && $page.error?.message == 'Not Found') {
-	// 	message = 'The requested URL was not found on this server.'
-	// }
 </script>
+
+<svelte:head>
+	<title>{error?.message} - URL Shortener</title>
+</svelte:head>
 
 <div class="hero min-h-screen bg-base-200">
 	<div class="hero-content text-center">

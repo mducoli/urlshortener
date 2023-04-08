@@ -175,7 +175,7 @@
 </script>
 
 <svelte:head>
-	<title>0kb URL Shortener</title>
+	<title>Dashboard - URL Shortener</title>
 </svelte:head>
 
 <div class="container m-auto py-6">
