@@ -261,7 +261,7 @@
 
 			<tbody>
 				<!-- rows -->
-				{#each data.urls.filter( (e) => (show_hidden_link ? e.hidden : !e.hidden) ) as url, _ (url.id)}
+				{#each data.urls.filter((e) => (show_hidden_link ? e.hidden : !e.hidden)) as url (url.id)}
 					<tr animate:flip in:fade out:fly={{ x: 100 }}>
 						<td class="overflow-hidden" style="max-width: 1px;"
 							><div>{url.title || url.long_url}</div></td
@@ -323,6 +323,7 @@
 				<div class="flex">
 					<span>{info_modal.data?.title || info_modal.data?.long_url}</span>
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
 						class="my-auto ml-2 cursor-pointer"
 						on:click={() => {
