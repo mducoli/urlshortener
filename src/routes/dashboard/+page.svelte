@@ -5,10 +5,9 @@
 	import { faEdit, faCircleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons'
 	import { page } from '$app/stores'
 	import { enhance } from '$app/forms'
-	import type { SubmitFunction } from '$app/forms'
 	import { fade, fly } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
-	import type { PageData, ActionData } from './$types'
+	import type { PageData, ActionData, SubmitFunction } from './$types'
 	import type { Link as dLink } from '$lib/types'
 
 	export let data: PageData
@@ -22,6 +21,9 @@
 	$: {
 		if (form) {
 			if (form.error == undefined) {
+				error.show = false
+				error.message = ""
+
 				switch (form.action) {
 					// CREATE ACTION
 					case 'create': {
@@ -87,12 +89,9 @@
 		handle: () => {
 			create_form.loading = true
 
-			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data
+			return async ({ update }) => {
+				await update()
 				create_form.loading = false
-				if (result.type == 'success') {
-					form_el.reset()
-				}
 			}
 		}
 	}
@@ -106,14 +105,15 @@
 		handle: () => {
 			edit_form.loading = true
 
-			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data
+			return async ({ result, update }) => {
+				await update({ reset: false })
 				edit_form.loading = false
 
 				if (result.type == 'success') {
-					form_el.reset()
-					info_modal.data = form?.updated
-					edit_modal.visible = false
+					if (result.data?.action == 'update') {
+						info_modal.data = result.data.updated
+						edit_modal.visible = false
+					}
 				}
 			}
 		}
@@ -128,12 +128,11 @@
 		handle: () => {
 			hide_form.loading = true
 
-			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data
+			return async ({ result, update }) => {
+				await update({ reset: false })
 				hide_form.loading = false
 
 				if (result.type == 'success') {
-					form_el.reset()
 					hide_modal.visible = false
 					info_modal.visible = false
 				}
@@ -150,12 +149,11 @@
 		handle: () => {
 			show_form.loading = true
 
-			return ({ result, form: form_el }) => {
-				form = (result as unknown as { data: ActionData }).data
+			return async ({ result, update }) => {
+				await update({ reset: false })
 				show_form.loading = false
 
 				if (result.type == 'success') {
-					form_el.reset()
 					show_modal.visible = false
 					info_modal.visible = false
 				}
