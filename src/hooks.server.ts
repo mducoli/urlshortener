@@ -3,7 +3,6 @@ import { PremadeError } from '$lib/server/errors'
 import type { Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
-// TODO
 const handleAuth = (async ({ event, resolve }) => {
 	if (event.url.pathname == '/dashboard') {
 		if (!event.platform?.env?.APP_SECRET) {

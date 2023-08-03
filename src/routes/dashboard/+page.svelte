@@ -47,7 +47,7 @@
 		}
 	}
 
-	let show_hidden_link: boolean = false
+	let show_hidden_link = false
 	let base_url = $page.url.host
 
 	// modals

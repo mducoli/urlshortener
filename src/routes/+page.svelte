@@ -1,7 +1,6 @@
 <svelte:head>
-    <title>Hey there!</title> 
+	<title>Hey there!</title>
 </svelte:head>
-
 
 <div class="hero min-h-screen bg-base-200">
 	<div class="hero-content text-center">
