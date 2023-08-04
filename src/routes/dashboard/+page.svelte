@@ -22,7 +22,7 @@
 		if (form) {
 			if (form.error == undefined) {
 				error.show = false
-				error.message = ""
+				error.message = ''
 
 				switch (form.action) {
 					// CREATE ACTION
@@ -54,11 +54,11 @@
 
 	// modals
 	let info_modal = {
-		visible: false,
+		dialog: undefined as unknown as HTMLDialogElement,
 		data: undefined as undefined | dLink
 	}
 	let edit_modal = {
-		visible: false,
+		dialog: undefined as unknown as HTMLDialogElement,
 		data: undefined as undefined | dLink,
 		user_data: {
 			_shortid: '',
@@ -66,14 +66,14 @@
 		}
 	}
 	let hide_modal = {
-		visible: false,
+		dialog: undefined as unknown as HTMLDialogElement,
 		data: undefined as undefined | dLink,
 		user_data: {
 			_shortid: ''
 		}
 	}
 	let show_modal = {
-		visible: false,
+		dialog: undefined as unknown as HTMLDialogElement,
 		data: undefined as undefined | dLink,
 		user_data: {
 			_shortid: ''
@@ -112,7 +112,7 @@
 				if (result.type == 'success') {
 					if (result.data?.action == 'update') {
 						info_modal.data = result.data.updated
-						edit_modal.visible = false
+						edit_modal.dialog.close()
 					}
 				}
 			}
@@ -133,8 +133,8 @@
 				hide_form.loading = false
 
 				if (result.type == 'success') {
-					hide_modal.visible = false
-					info_modal.visible = false
+					hide_modal.dialog.close()
+					info_modal.dialog.close()
 				}
 			}
 		}
@@ -154,8 +154,8 @@
 				show_form.loading = false
 
 				if (result.type == 'success') {
-					show_modal.visible = false
-					info_modal.visible = false
+					show_modal.dialog.close()
+					info_modal.dialog.close()
 				}
 			}
 		}
@@ -249,15 +249,15 @@
 		<table class="table w-full">
 			<!-- head -->
 			<thead>
-				<tr>
-					<th>Title</th>
+				<tr class="bg-base-200 text-base-content">
+					<th>TITLE</th>
 					<th>URL</th>
-					<th>Date</th>
+					<th>DATE</th>
 					<th />
 				</tr>
 			</thead>
 
-			<tbody>
+			<tbody class="text-base">
 				<!-- rows -->
 				{#each data.urls.filter((e) => (show_hidden_link ? e.hidden : !e.hidden)) as url (url.id)}
 					<tr animate:flip in:fade out:fly={{ x: 100 }}>
@@ -286,7 +286,7 @@
 									class="btn btn-ghost btn-xs"
 									on:click={() => {
 										info_modal.data = url
-										info_modal.visible = true
+										info_modal.dialog.showModal()
 									}}>details</button
 								>
 							</div></td
@@ -300,207 +300,157 @@
 
 <!-- Details Modal -->
 
-<input
-	type="checkbox"
-	id="toggle_tohide_info_modal"
-	hidden
-	on:change={() => {
-		info_modal.visible = false
-	}}
-/>
-{#if info_modal.visible}
-	<label
-		for="toggle_tohide_info_modal"
-		class="modal cursor-pointer modal-open"
-		transition:fade={{ duration: 150 }}
-	>
-		<label for="" class="modal-box relative w-11/12 max-w-7xl">
-			<h3 class="text-lg font-bold">Link details</h3>
-			<div class="py-4" style="word-break: break-all;">
-				<b>Title</b>
-				<div class="flex">
-					<span>{info_modal.data?.title || info_modal.data?.long_url}</span>
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div
-						class="my-auto ml-2 cursor-pointer"
-						on:click={() => {
-							edit_modal.user_data.new_title =
-								info_modal.data?.title || info_modal.data?.long_url || ''
-							edit_modal.user_data._shortid = info_modal.data?.id || ''
-							edit_modal.data = info_modal.data
-							edit_modal.visible = true
-						}}
-					>
-						<Icon icon={faEdit} />
-					</div>
+<dialog class="modal" bind:this={info_modal.dialog}>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+	<label for="" class="modal-box relative w-11/12 max-w-7xl">
+		<h3 class="text-lg font-bold">Link details</h3>
+		<div class="py-4" style="word-break: break-all;">
+			<b>Title</b>
+			<div class="flex">
+				<span>{info_modal.data?.title || info_modal.data?.long_url}</span>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<div
+					class="my-auto ml-2 cursor-pointer"
+					on:click={() => {
+						edit_modal.user_data.new_title =
+							info_modal.data?.title || info_modal.data?.long_url || ''
+						edit_modal.user_data._shortid = info_modal.data?.id || ''
+						edit_modal.data = info_modal.data
+						edit_modal.dialog.showModal()
+					}}
+				>
+					<Icon icon={faEdit} />
 				</div>
-				<br />
-				<b>Long URL</b>
-				<Link href={info_modal.data?.long_url + ''} target="_blank"
-					>{info_modal.data?.long_url}</Link
-				>
-				<br />
-				<b>Short URL</b>
-				<Link
-					href={$page.url.protocol + '//' + base_url + '/' + info_modal.data?.id}
-					target="_blank">{$page.url.protocol}//{base_url}/{info_modal.data?.id}</Link
-				>
-				<br />
-				{#if !info_modal.data?.hidden}
-					<button
-						class="btn btn-error"
-						on:click={() => {
-							hide_modal.user_data._shortid = info_modal.data?.id || ''
-							hide_modal.data = info_modal.data
-							hide_modal.visible = true
-						}}>Hide link</button
-					>
-				{:else}
-					<button
-						class="btn btn-success"
-						on:click={() => {
-							show_modal.user_data._shortid = info_modal.data?.id || ''
-							show_modal.data = info_modal.data
-							show_modal.visible = true
-						}}>Show link</button
-					>
-				{/if}
 			</div>
-		</label>
+			<br />
+			<b>Long URL</b>
+			<Link href={info_modal.data?.long_url + ''} target="_blank">{info_modal.data?.long_url}</Link>
+			<br />
+			<b>Short URL</b>
+			<Link href={$page.url.protocol + '//' + base_url + '/' + info_modal.data?.id} target="_blank"
+				>{$page.url.protocol}//{base_url}/{info_modal.data?.id}</Link
+			>
+			<br />
+			{#if !info_modal.data?.hidden}
+				<button
+					class="btn btn-error"
+					on:click={() => {
+						hide_modal.user_data._shortid = info_modal.data?.id || ''
+						hide_modal.data = info_modal.data
+						hide_modal.dialog.showModal()
+					}}>Hide link</button
+				>
+			{:else}
+				<button
+					class="btn btn-success"
+					on:click={() => {
+						show_modal.user_data._shortid = info_modal.data?.id || ''
+						show_modal.data = info_modal.data
+						show_modal.dialog.showModal()
+					}}>Show link</button
+				>
+			{/if}
+		</div>
 	</label>
-{/if}
+</dialog>
 
 <!-- Edit Modal -->
 
-<input
-	type="checkbox"
-	id="toggle_tohide_edit_modal"
-	hidden
-	on:change={() => {
-		edit_modal.visible = false
-	}}
-/>
-{#if edit_modal.visible}
-	<label
-		for="toggle_tohide_edit_modal"
-		class="modal cursor-pointer modal-open"
-		transition:fade={{ duration: 150 }}
-	>
-		<label class="modal-box relative w-11/12 max-w-7xl" for="">
-			<h3 class="text-lg font-bold w-full">Edit link title</h3>
-			<p class="py-4">The title is only visible to you</p>
-			<form action="?/edittitle" method="post" use:enhance={edit_form.handle}>
-				<input
-					type="text"
-					bind:value={edit_modal.user_data.new_title}
-					placeholder={edit_modal.data?.title || edit_modal.data?.long_url}
-					class="input input-bordered w-full mb-4"
-					name="title"
-				/>
-				<input type="text" hidden bind:value={edit_modal.user_data._shortid} name="shortid" />
-				<div class="btn-group float-right">
-					<button
-						type="button"
-						class="btn"
-						on:click={() => {
-							edit_modal.visible = false
-						}}>Cancel</button
-					>
-					<button
-						type="submit"
-						class="btn btn-success"
-						disabled={edit_modal.user_data.new_title == '' ||
-							edit_modal.user_data.new_title ==
-								(edit_modal.data?.title || edit_modal.data?.long_url)}
-						class:loading={edit_form.loading}>Edit</button
-					>
-				</div>
-			</form>
-		</label>
+<dialog class="modal" bind:this={edit_modal.dialog}>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+	<label class="modal-box relative w-11/12 max-w-7xl" for="">
+		<h3 class="text-lg font-bold w-full">Edit link title</h3>
+		<p class="py-4">The title is only visible to you</p>
+		<form action="?/edittitle" method="post" use:enhance={edit_form.handle}>
+			<input
+				type="text"
+				bind:value={edit_modal.user_data.new_title}
+				placeholder={edit_modal.data?.title || edit_modal.data?.long_url}
+				class="input input-bordered w-full mb-4"
+				name="title"
+			/>
+			<input type="text" hidden bind:value={edit_modal.user_data._shortid} name="shortid" />
+			<div class="btn-group float-right">
+				<button
+					type="button"
+					class="btn"
+					on:click={() => {
+						edit_modal.dialog.close()
+					}}>Cancel</button
+				>
+				<button
+					type="submit"
+					class="btn btn-success"
+					disabled={edit_modal.user_data.new_title == '' ||
+						edit_modal.user_data.new_title == (edit_modal.data?.title || edit_modal.data?.long_url)}
+					class:loading={edit_form.loading}>Edit</button
+				>
+			</div>
+		</form>
 	</label>
-{/if}
+</dialog>
 
 <!-- Hide Modal -->
 
-<input
-	type="checkbox"
-	id="toggle_tohide_hide_modal"
-	hidden
-	on:change={() => {
-		hide_modal.visible = false
-	}}
-/>
-{#if hide_modal.visible}
-	<label
-		for="toggle_tohide_hide_modal"
-		class="modal cursor-pointer modal-open"
-		transition:fade={{ duration: 150 }}
-	>
-		<label class="modal-box relative" for="">
-			<h3 class="text-lg font-bold">Hide link</h3>
-			<p class="py-4">
-				Links are permanent and cannot be deleted so this will only hide <b
-					>{base_url + '/' + hide_modal.data?.id}</b
-				> from the list.
-			</p>
-			<div class="btn-group float-right">
-				<button
-					class="btn"
-					on:click={() => {
-						hide_modal.visible = false
-					}}>Cancel</button
-				>
+<dialog class="modal" bind:this={hide_modal.dialog}>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+	<label class="modal-box relative" for="">
+		<h3 class="text-lg font-bold">Hide link</h3>
+		<p class="py-4">
+			Links are permanent and cannot be deleted so this will only hide <b
+				>{base_url + '/' + hide_modal.data?.id}</b
+			> from the list.
+		</p>
+		<div class="btn-group float-right">
+			<button
+				class="btn"
+				on:click={() => {
+					hide_modal.dialog.close()
+				}}>Cancel</button
+			>
+			<button hidden />
+			<form action="?/hide" method="post" use:enhance={hide_form.handle}>
+				<input type="text" hidden name="shortid" bind:value={hide_modal.user_data._shortid} />
 				<button hidden />
-				<form action="?/hide" method="post" use:enhance={hide_form.handle}>
-					<input type="text" hidden name="shortid" bind:value={hide_modal.user_data._shortid} />
-					<button hidden />
-					<button class="btn btn-error" class:loading={hide_form.loading} type="submit">Hide</button
-					>
-				</form>
-			</div>
-		</label>
+				<button class="btn btn-error" class:loading={hide_form.loading} type="submit">Hide</button>
+			</form>
+		</div>
 	</label>
-{/if}
+</dialog>
 
 <!-- Show modal -->
 
-<input
-	type="checkbox"
-	id="toggle_tohide_show_modal"
-	hidden
-	on:change={() => {
-		show_modal.visible = false
-	}}
-/>
-{#if show_modal.visible}
-	<label
-		for="toggle_tohide_show_modal"
-		class="modal cursor-pointer modal-open"
-		transition:fade={{ duration: 150 }}
-	>
-		<label class="modal-box relative" for="">
-			<h3 class="text-lg font-bold">Show link</h3>
-			<p class="py-4">
-				The link <b>{base_url + '/' + show_modal.data?.id}</b> will be visible in the list.
-			</p>
-			<div class="btn-group float-right">
-				<button
-					class="btn"
-					on:click={() => {
-						show_modal.visible = false
-					}}>Cancel</button
-				>
+<dialog class="modal" bind:this={show_modal.dialog}>
+	<form method="dialog" class="modal-backdrop">
+		<button>close</button>
+	</form>
+	<label class="modal-box relative" for="">
+		<h3 class="text-lg font-bold">Show link</h3>
+		<p class="py-4">
+			The link <b>{base_url + '/' + show_modal.data?.id}</b> will be visible in the list.
+		</p>
+		<div class="btn-group float-right">
+			<button
+				class="btn"
+				on:click={() => {
+					show_modal.dialog.close()
+				}}>Cancel</button
+			>
+			<button hidden />
+			<form action="?/hide" method="post" use:enhance={show_form.handle}>
+				<input type="text" hidden name="shortid" bind:value={show_modal.user_data._shortid} />
+				<input type="checkbox" hidden name="show" checked />
 				<button hidden />
-				<form action="?/hide" method="post" use:enhance={show_form.handle}>
-					<input type="text" hidden name="shortid" bind:value={show_modal.user_data._shortid} />
-					<input type="checkbox" hidden name="show" checked />
-					<button hidden />
-					<button class="btn btn-success" class:loading={show_form.loading} type="submit"
-						>Show</button
-					>
-				</form>
-			</div>
-		</label>
+				<button class="btn btn-success" class:loading={show_form.loading} type="submit">Show</button
+				>
+			</form>
+		</div>
 	</label>
-{/if}
+</dialog>
