@@ -4,7 +4,7 @@
 	import Icon from 'svelte-fa'
 	import { faEdit, faCircleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons'
 	import { page } from '$app/stores'
-	import { enhance } from '$app/forms'
+	import { applyAction, enhance } from '$app/forms'
 	import { fade, fly, scale } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
 	import type { PageData, ActionData, SubmitFunction } from './$types'
@@ -89,14 +89,17 @@
 		handle: () => {
 			create_form.loading = true
 
-			return async ({ update }) => {
-				await update()
+			return async ({ result, formElement }) => {
+				await applyAction(result)
+				if (result.type == 'success') {
+					formElement.reset()
+				}
 				create_form.loading = false
 			}
 		}
 	}
 
-	//EDIT FORM
+	//EDIT TITLE FORM
 	let edit_form: {
 		loading: boolean
 		handle: SubmitFunction
@@ -105,8 +108,8 @@
 		handle: () => {
 			edit_form.loading = true
 
-			return async ({ result, update }) => {
-				await update({ reset: false })
+			return async ({ result }) => {
+				await applyAction(result)
 				edit_form.loading = false
 
 				if (result.type == 'success') {
@@ -119,7 +122,7 @@
 		}
 	}
 
-	// HIDE_FORM
+	// HIDE FORM
 	let hide_form: {
 		loading: boolean
 		handle: SubmitFunction
@@ -128,8 +131,8 @@
 		handle: () => {
 			hide_form.loading = true
 
-			return async ({ result, update }) => {
-				await update({ reset: false })
+			return async ({ result }) => {
+				await applyAction(result)
 				hide_form.loading = false
 
 				if (result.type == 'success') {
@@ -149,8 +152,8 @@
 		handle: () => {
 			show_form.loading = true
 
-			return async ({ result, update }) => {
-				await update({ reset: false })
+			return async ({ result }) => {
+				await applyAction(result)
 				show_form.loading = false
 
 				if (result.type == 'success') {
