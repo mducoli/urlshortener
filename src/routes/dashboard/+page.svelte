@@ -1,11 +1,11 @@
 <script lang="ts">
-	import Copy from '$lib/Copy.svelte'
-	import Link from '$lib/Link.svelte'
+	import Copy from '$lib/components/Copy.svelte'
+	import Link from '$lib/components/Link.svelte'
 	import Icon from 'svelte-fa'
 	import { faEdit, faCircleExclamation, faXmark } from '@fortawesome/free-solid-svg-icons'
 	import { page } from '$app/stores'
 	import { enhance } from '$app/forms'
-	import { fade, fly } from 'svelte/transition'
+	import { fade, fly, scale } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
 	import type { PageData, ActionData, SubmitFunction } from './$types'
 	import type { Link as dLink } from '$lib/types'
@@ -228,12 +228,14 @@
 	</div>
 
 	{#if error.show}
-		<div class="alert alert-error shadow-lg mt-6" transition:fade={{ duration: 150 }}>
-			<div>
-				<Icon icon={faCircleExclamation} />
+		<div class="alert alert-error flex mt-6" transition:scale={{ duration: 150 }}>
+			<div class="flex mr-auto">
+				<div class="my-auto mr-2">
+					<Icon icon={faCircleExclamation} />
+				</div>
 				<span>{error.message}</span>
 			</div>
-			<div class="flex-none">
+			<div>
 				<button
 					class="btn btn-sm btn-ghost"
 					on:click={() => {
