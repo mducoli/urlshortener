@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
+		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "wrangler pages dev .svelte-kit/cloudflare --local --persist-to .wrangler -k DATA -b APP_SECRET=secret",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -12,6 +13,8 @@
 	},
 	"devDependencies": {
 		"@fortawesome/free-solid-svg-icons": "^6.4.2",
+		"@miniflare/kv": "^2.14.0",
+		"@miniflare/storage-file": "^2.14.0",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/adapter-cloudflare": "^2.3.2",
 		"@sveltejs/kit": "^1.20.4",

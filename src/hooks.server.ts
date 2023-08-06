@@ -1,9 +1,30 @@
+import { dev } from '$app/environment';
 import { authenticate } from '$lib/server/auth'
 import { PremadeError } from '$lib/server/errors'
 import type { Handle } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
+// https://github.com/ghostdevv/short/blob/e8962d83547ce0915b9e8ab801cf06a440973ee3/src/hooks.server.ts
+async function kv(name: string) {
+    const { FileStorage } = await import('@miniflare/storage-file');
+    const { KVNamespace: KV } = await import('@miniflare/kv');
+
+	// TODO: this uses the v2 api (not v3) so it's not 100% compatible (remove "as unknown")
+    return new KV(new FileStorage(`./.mf/${name}`)) as unknown as KVNamespace;
+}
+
 const handleAuth = (async ({ event, resolve }) => {
+
+	// mock env for vite dev server 
+	if (dev) {
+        event.platform ??= {
+            env: {
+				APP_SECRET: 'secret',
+                DATA: await kv('DATA'),
+            },
+        };
+    }
+
 	if (event.url.pathname == '/dashboard') {
 		if (!event.platform?.env?.APP_SECRET) {
 			throw PremadeError.ENVMISS
