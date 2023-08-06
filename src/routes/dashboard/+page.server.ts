@@ -13,7 +13,19 @@ export const load = (async ({ locals, platform }) => {
 	if (!platform?.env?.DATA) throw PremadeError.ENVMISS
 
 	const db = new KVFast<Link>(platform.env.DATA, 'link')
-	const data = await db.list()
+	const data = await db.list({ limit: 5 })
+
+	// due to KV limitations for the ordering to be correct we need to fetch every link
+	while (!data.list_complete) {
+		const newdata = await db.list({
+			limit: 5,
+			cursor: data.cursor
+		})
+		data.values = data.values.concat(newdata.values)
+		//@ts-expect-error i don't care that data.list_complete is false i just want to write to it
+		data.list_complete = newdata.list_complete
+		data.cursor = newdata.list_complete ? '' : newdata.cursor
+	}
 
 	data.values.sort((a, b) => {
 		return b.created_at.getTime() - a.created_at.getTime()

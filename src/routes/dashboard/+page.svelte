@@ -189,23 +189,23 @@
 			class="flex flex-wrap grow"
 		>
 			<!-- URL input -->
-			<div class="form-control w-full max-w-md">
+			<div class="form-control w-full max-w-md mr-6">
 				<label class="label" for="">
-					<span class="label-text">URL</span>
+					<span class="label-text">Long URL</span>
 				</label>
 				<input
 					type="url"
 					name="url"
-					placeholder="https://example.com/longurlthatyouwanttoshortener"
+					placeholder="Example: https://example.com/longurlthatyouwanttoshortener"
 					class="input input-bordered w-full max-w-md"
 					required
 					disabled={create_form.loading}
 				/>
 			</div>
 			<!-- id input -->
-			<div class="form-control ml-6">
+			<div class="form-control mr-6">
 				<label class="label" for="">
-					<span class="label-text">Short</span>
+					<span class="label-text">Short URL</span>
 				</label>
 				<label class="input-group">
 					<span>{base_url}/</span>
@@ -220,9 +220,7 @@
 				</label>
 			</div>
 			<!-- Submit button -->
-			<button class="btn btn-primary mt-auto ml-6" class:loading={create_form.loading}
-				>Create</button
-			>
+			<button class="btn btn-primary mt-auto" class:loading={create_form.loading}>Create</button>
 		</form>
 		<!-- toggle hidden -->
 		<div class="tooltip tooltip-left mt-auto ml-auto" data-tip="Show hidden links">
@@ -266,26 +264,21 @@
 				<!-- rows -->
 				{#each data.urls.filter((e) => (show_hidden_link ? e.hidden : !e.hidden)) as url (url.id)}
 					<tr animate:flip in:fade out:fly={{ x: 100 }}>
-						<td class="overflow-hidden" style="max-width: 1px;"
-							><div>{url.title || url.long_url}</div></td
-						>
-						<td style="width: 1px;"
+						<td class="overflow-hidden w-full"><div>{url.title || url.long_url}</div></td>
+						<td
 							><div>
 								<Copy value={$page.url.protocol + '//' + base_url + '/' + url.id}
 									>{base_url}/{url.id}</Copy
 								>
 							</div></td
 						>
-						<td style="width: 1px;"
+						<td class="hidden md:table-cell"
 							><div>
-								{url.created_at.toLocaleDateString('it-it', {
-									year: 'numeric',
-									month: 'numeric',
-									day: 'numeric'
-								})}
+								<!-- TODO: server is not aware of the user locale so this date could flicker on page load -->
+								{url.created_at.toLocaleDateString()}
 							</div></td
 						>
-						<td style="width: 1px;"
+						<td
 							><div>
 								<button
 									class="btn btn-ghost btn-xs"
@@ -338,6 +331,11 @@
 			<Link href={$page.url.protocol + '//' + base_url + '/' + info_modal.data?.id} target="_blank"
 				>{$page.url.protocol}//{base_url}/{info_modal.data?.id}</Link
 			>
+			<br />
+			<b>Creation Date</b>
+			<p>
+				{info_modal.data?.created_at.toLocaleString()}
+			</p>
 			<br />
 			{#if !info_modal.data?.hidden}
 				<button
