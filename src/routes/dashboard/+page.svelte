@@ -380,17 +380,17 @@
 				name="title"
 			/>
 			<input type="text" hidden bind:value={edit_modal.user_data._shortid} name="shortid" />
-			<div class="btn-group float-right">
+			<div class="join float-right">
 				<button
 					type="button"
-					class="btn"
+					class="btn join-item"
 					on:click={() => {
 						edit_modal.dialog.close()
 					}}>Cancel</button
 				>
 				<button
 					type="submit"
-					class="btn btn-success"
+					class="btn btn-success join-item"
 					disabled={edit_modal.user_data.new_title == '' ||
 						edit_modal.user_data.new_title == (edit_modal.data?.title || edit_modal.data?.long_url)}
 					class:loading={edit_form.loading}>Edit</button
@@ -413,18 +413,18 @@
 				>{base_url + '/' + hide_modal.data?.id}</b
 			> from the list.
 		</p>
-		<div class="btn-group float-right">
+		<div class="join float-right">
 			<button
-				class="btn"
+				class="btn join-item"
 				on:click={() => {
 					hide_modal.dialog.close()
 				}}>Cancel</button
 			>
-			<button hidden />
 			<form action="?/hide" method="post" use:enhance={hide_form.handle}>
 				<input type="text" hidden name="shortid" bind:value={hide_modal.user_data._shortid} />
-				<button hidden />
-				<button class="btn btn-error" class:loading={hide_form.loading} type="submit">Hide</button>
+				<button class="btn btn-error join-item" class:loading={hide_form.loading} type="submit"
+					>Hide</button
+				>
 			</form>
 		</div>
 	</label>
@@ -441,19 +441,18 @@
 		<p class="py-4">
 			The link <b>{base_url + '/' + show_modal.data?.id}</b> will be visible in the list.
 		</p>
-		<div class="btn-group float-right">
+		<div class="join float-right">
 			<button
-				class="btn"
+				class="btn join-item"
 				on:click={() => {
 					show_modal.dialog.close()
 				}}>Cancel</button
 			>
-			<button hidden />
 			<form action="?/hide" method="post" use:enhance={show_form.handle}>
 				<input type="text" hidden name="shortid" bind:value={show_modal.user_data._shortid} />
 				<input type="checkbox" hidden name="show" checked />
-				<button hidden />
-				<button class="btn btn-success" class:loading={show_form.loading} type="submit">Show</button
+				<button class="btn btn-success join-item" class:loading={show_form.loading} type="submit"
+					>Show</button
 				>
 			</form>
 		</div>
