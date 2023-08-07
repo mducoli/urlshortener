@@ -15,7 +15,10 @@ declare global {
 			env?: {
 				DATA?: KVNamespace
 				APP_SECRET?: string
-			}
+			},
+			context?: ExecutionContext,
+			caches?: CacheStorage,
+			cf?: IncomingRequestCfProperties
 		}
 	}
 }

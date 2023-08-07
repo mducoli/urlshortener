@@ -49,11 +49,11 @@ const handleAuth = (async ({ event, resolve }) => {
 }) satisfies Handle
 
 const handleCache = (async ({ event, resolve }) => {
-	if (typeof caches == 'undefined') {
+	if (typeof event.platform?.caches == 'undefined') {
 		return resolve(event)
 	}
 
-	const cache = await caches.open('maincache')
+	const cache = await event.platform.caches.open('maincache')
 
 	// HIT
 	const cached = await cache.match(event.request)
