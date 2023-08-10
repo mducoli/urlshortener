@@ -49,21 +49,29 @@ const handleAuth = (async ({ event, resolve }) => {
 }) satisfies Handle
 
 const handleCache = (async ({ event, resolve }) => {
-	if (typeof event.platform?.caches == 'undefined') {
+	// check environment
+	if (
+		typeof event.platform?.caches == 'undefined' ||
+		typeof event.platform.context == 'undefined'
+	) {
 		return resolve(event)
 	}
 
-	const cache = await event.platform.caches.open('maincache')
+	const cacheKey = new Request(event.request.url, event.request)
+	const cache = event.platform.caches.default
+
+	const cached = await cache.match(cacheKey)
 
 	// HIT
-	const cached = await cache.match(event.request)
-	if (cached) console.log('CACHE HIT')
-	if (cached) return cached
+	if (cached) {
+		console.log('CACHE HIT')
+		return cached
+	}
 
 	// MISS
 	const response = await resolve(event)
 	if (response.headers.has('cache-control')) {
-		cache.put(event.request, response.clone())
+		event.platform.context.waitUntil(cache.put(cacheKey, response.clone()))
 	}
 
 	return response

@@ -1,6 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
 /// <reference types="@cloudflare/workers-types"/>
+/// <reference types="./lib/cloudflare.d.ts"/>
 
 declare global {
 	namespace App {
@@ -17,7 +18,7 @@ declare global {
 				APP_SECRET?: string
 			},
 			context?: ExecutionContext,
-			caches?: CacheStorage,
+			caches?: CFCache,
 			cf?: IncomingRequestCfProperties
 		}
 	}
